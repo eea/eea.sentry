@@ -1,0 +1,6 @@
+[report]
+include =
+    eea/*
+omit =
+    */test*
+    */upgrades/*
