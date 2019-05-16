@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.0-dev0 - (unreleased)
------------------------
+0.1 - (2019-05-16)
+------------------
 * Feature: Add custom raven processors to cleanup Zope REQUEST
   [avoinea refs #104872]
 * Upgrade step: Within "Plone > Site setup > Add-ons" install eea.sentry
