@@ -50,7 +50,7 @@ In order to start sending error logs to sentry you'll need to provide the follow
 * **SENTRY_DSN** - Send python tracebacks to sentry.io or your custom Sentry installation (e.g.: **SENTRY_DSN=https://<public_key>:<secret_key>@sentry.example.com**)
 * **SENTRY_SITE**, **SERVER_NAME** - Add **site** tag to Sentry logs (e.g.: **SENTRY_SITE=foo.example.com**)
 * **SENTRY_RELEASE**, **EEA_KGS_VERSION** - Add **release** tag to Sentry logs (e.g.: **SENTRY_RELEASE=5.1.5-34**)
-* **SENTRY_ENVIRONMENT** - Add **environment** tag to Sentry logs (e.g.: **SENTRY_ENVIRONMENT=staging**)
+* **SENTRY_ENVIRONMENT** - Add **environment** tag to Sentry logs. Leave empty to automatically get it from rancher-metadata (e.g.: **SENTRY_ENVIRONMENT=staging**)
 
 
 Buildout installation

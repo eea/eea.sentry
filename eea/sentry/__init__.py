@@ -32,9 +32,9 @@ def initialize(context):
 
     sentry_handler = ZopeSentryHandler(sentry_dsn,
         site=os.environ.get('SENTRY_SITE',
-             os.environ.get('SERVER_NAME', "")),
+             os.environ.get('SERVER_NAME', "dev")),
         release=os.environ.get('SENTRY_RELEASE',
-                os.environ.get('EEA_KGS_VERSION', '')),
+                os.environ.get('EEA_KGS_VERSION', 'dev')),
         environment=os.environ.get("SENTRY_ENVIRONMENT", environment()),
         processors=['eea.sentry.processors.SanitizeZopeProcessor'],
     )
