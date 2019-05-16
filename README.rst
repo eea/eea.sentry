@@ -17,15 +17,15 @@ Main features
 =============
 It comes with plenty of configuration options and features like:
 
-1. Easy to install/uninstall via Site Setup > Add-ons
-2.
-3.
+1. Easy to install/uninstall via Site Setup > Add-ons;
+2. Easily setup Sentry integration via environment variables;
+3. Report Python/Javascript errors to Sentry.
+
 
 Install
 =======
 
-* Add eea.sentry to your eggs section in your buildout and
-  re-run buildout::
+* Add eea.sentry to your eggs section in your buildout and re-run buildout::
 
     [buildout]
     eggs +=
@@ -38,9 +38,19 @@ Install
 
 * Or via docker::
 
-    $ docker run --rm -p 8080:8080 -e ADDONS="eea.sentry" plone
+    $ docker run --rm -p 8080:8080 -e ADDONS="eea.sentry" -e SENTRY_DSN="https://<public_key>:<secret_key>@sentry.io" plone
 
 * Install *eea.sentry* within Site Setup > Add-ons
+
+Environment variables
+=====================
+
+In order to start sending error logs to sentry you'll need to provide the following environment variables to your Zope/Plone instance:
+
+* **SENTRY_DSN** - Send python tracebacks to sentry.io or your custom Sentry installation (e.g.: **SENTRY_DSN=https://<public_key>:<secret_key>@sentry.example.com**)
+* **SENTRY_SITE**, **SERVER_NAME** - Add **site** tag to Sentry logs (e.g.: **SENTRY_SITE=foo.example.com**)
+* **SENTRY_RELEASE**, **EEA_KGS_VERSION** - Add **release** tag to Sentry logs (e.g.: **SENTRY_RELEASE=5.1.5-34**)
+* **SENTRY_ENVIRONMENT** - Add **environment** tag to Sentry logs (e.g.: **SENTRY_ENVIRONMENT=staging**)
 
 
 Buildout installation

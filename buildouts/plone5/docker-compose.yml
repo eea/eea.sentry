@@ -9,3 +9,7 @@ services:
     environment:
       ADDONS: "eea.sentry[test]"
       DEVELOP: "src/eea.sentry"
+      SENTRY_DSN: "https://<public_key>:<secret_key>@sentry.example.com"
+      SENTRY_SITE: "foo.example.com"
+      SENTRY_RELEASE: "0.1.dev0"
+      SENTRY_ENVIRONMENT: "devel"
