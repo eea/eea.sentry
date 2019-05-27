@@ -3,4 +3,15 @@
   xmlns:browser="http://namespaces.zope.org/browser"
   i18n_domain="eea">
 
+  <browser:resourceDirectory
+    name="eea.sentry.js"
+    directory="./js" />
+
+  <browser:page
+    name="sentry"
+    for="zope.interface.Interface"
+    class=".sentry.Sentry"
+    permission="zope2.View"
+    />
+
 </configure>

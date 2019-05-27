@@ -1,0 +1,24 @@
+<script type="text/javascript" src="/++resource++eea.sentry.js/raven.min.js"></script>
+<script type="text/javascript" tal:content="string:
+$(function(){
+    var sentry_dsn = '${view/dsn}';
+    var sentry_env = '${view/environment}';
+    var sentry_ver = '${view/version}';
+    var sentry_site = '${view/site}';
+    
+    if (sentry_dsn){
+        Raven.config(sentry_dsn, {
+            logger: 'javascript',
+            release: sentry_ver,
+            environment: sentry_env,
+            site: sentry_site,
+            ignoreErrors: [
+                'jQuery is not defined',
+                 '$ is not defined',
+                 'Can\'t find variable: jQuery',
+                 'Socialite is not defined',
+                 'Persistent storage maximum size reached'
+            ]
+        }).install();
+    }
+});"></script>
