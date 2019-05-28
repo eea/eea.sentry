@@ -38,6 +38,7 @@ setup(name=NAME,
             python_requires="==2.7",
             install_requires=[
           'setuptools',
+          'eventlet',
           'raven',
           # -*- Extra requirements: -*-
       ],

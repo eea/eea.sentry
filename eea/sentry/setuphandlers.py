@@ -19,6 +19,7 @@ class HiddenProfiles(object):
         """ Hide uninstall profile from site-creation and quickinstaller.
         """
         return [
+            'eea.sentry:universal',
             'eea.sentry:uninstall',
         ]
 

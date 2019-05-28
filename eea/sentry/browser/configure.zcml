@@ -1,17 +1,28 @@
 <configure
   xmlns="http://namespaces.zope.org/zope"
+  xmlns:zcml="http://namespaces.zope.org/zcml"
   xmlns:browser="http://namespaces.zope.org/browser"
   i18n_domain="eea">
 
-  <browser:resourceDirectory
-    name="eea.sentry.js"
-    directory="./js" />
+  <browser:resource name="raven.min.js" file="./js/raven.min.js" />
+  <browser:resource name="sentry.js" file="./js/sentry.js" />
 
   <browser:page
     name="sentry"
     for="zope.interface.Interface"
     class=".sentry.Sentry"
     permission="zope2.View"
+    />
+
+  <browser:viewlet
+    zcml:condition="installed plone.app.layout.viewlets"
+    name="eea.sentry"
+    for="zope.interface.Interface"
+    manager="plone.app.layout.viewlets.interfaces.IAboveContent"
+    layer="eea.sentry.interfaces.IEeaSentryLayer"
+    class=".sentry.Sentry"
+    template="zpt/sentry.pt"
+    permission="zope.Public"
     />
 
 </configure>

@@ -7,7 +7,7 @@ from eventlet.green import urllib2
 from contextlib import closing
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from eea.cache import cache
+from eea.sentry.cache import ramcache
 
 logger = logging.getLogger("eea.sentry")
 
@@ -17,10 +17,14 @@ TIMEOUT = 15
 class Sentry(BrowserView):
     """ return sentry DSN env variable
     """
-    template = ViewPageTemplateFile("zpt/sentry.pt")
     _environment = os.environ.get("SENTRY_ENVIRONMENT", None)
 
-    @cache(lambda *args: "environment", lifetime=86400)
+    def __init__(self, context, request, view=None, manager=None):
+        super(Sentry, self).__init__(context, request)
+        self.view = view
+        self.manager = manager
+
+    @ramcache(lambda *args: "environment", lifetime=86400)
     def environment(self):
         """ Sentry environment
         """
@@ -33,18 +37,21 @@ class Sentry(BrowserView):
                     with closing(urllib2.urlopen(url, timeout=TIMEOUT)) as con:
                         self._environment = con.read()
                 except Exception as err:
-                    logger.exception(err)
+                    logger.warn(
+                        "Please provide SENTRY_ENVIRONMENT env as we "
+                        "could not get it automatically from %s due to: %s", 
+                        url, err)
                     self._environment = 'devel'
         return self._environment
 
-    @cache(lambda *args: "version", lifetime=86400)
+    @ramcache(lambda *args: "version", lifetime=86400)
     def version(self):
         """ KGS version
         """
-        return os.environ.get("SENTRY_RELEASE", 
+        return os.environ.get("SENTRY_RELEASE",
             os.environ.get("EEA_KGS_VERSION", ""))
 
-    @cache(lambda *args: "version", lifetime=86400)
+    @ramcache(lambda *args: "dsn", lifetime=86400)
     def dsn(self):
         """ Public Sentry DSN
         """
@@ -57,13 +64,16 @@ class Sentry(BrowserView):
         public = url._replace(netloc="{}@{}".format(
             url.username, url.hostname))
         return public.geturl()
-    
-    @cache(lambda *args: "site", lifetime=86400)
+
+    @ramcache(lambda *args: "site", lifetime=86400)
     def site(self):
         """ Sentry site
         """
-        return os.environ.get("SENTRY_SITE", 
+        return os.environ.get("SENTRY_SITE",
             os.environ.get("SERVER_NAME", ""))
 
     def __call__(self):
+        return self.index()
+
+    def render(self):
         return self.index()
