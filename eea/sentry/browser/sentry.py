@@ -89,8 +89,7 @@ class Sentry(BrowserView):
             user_dict = {}
         return json.dumps(user_dict)
 
-    def __call__(self):
-        return self.index()
-
     def render(self):
         return self.index()
+
+    __call__ = render

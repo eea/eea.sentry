@@ -1,6 +1,6 @@
-==========================
+==========
 eea.sentry
-==========================
+==========
 .. image:: https://ci.eionet.europa.eu/buildStatus/icon?job=eea/eea.sentry/develop
   :target: https://ci.eionet.europa.eu/job/eea/job/eea.sentry/job/develop/display/redirect
   :alt: Develop
@@ -8,7 +8,7 @@ eea.sentry
   :target: https://ci.eionet.europa.eu/job/eea/job/eea.sentry/job/master/display/redirect
   :alt: Master
 
-The eea.sentry is a Plone add-on
+Sentry integration for Plone and Zope
 
 .. contents::
 
@@ -31,6 +31,9 @@ Install
     eggs +=
       eea.sentry
 
+    zcml +=
+      eea.sentry
+
 * You can download a sample buildout from:
 
   - https://github.com/eea/eea.sentry/tree/master/buildouts/plone4
@@ -40,7 +43,20 @@ Install
 
     $ docker run --rm -p 8080:8080 -e ADDONS="eea.sentry" -e SENTRY_DSN="https://<public_key>:<secret_key>@sentry.io" plone
 
-* Install *eea.sentry* within Site Setup > Add-ons
+* Plone:
+
+  * Within Site Setup > Add-ons install eea.sentry
+
+* Zope:
+
+  * Add the following lines within your ZPT files / main_template::
+
+      <!-- Sentry start -->
+      <div tal:replace="structure context/@@sentry" />
+      <script type="text/javascript" src="/++resource++raven.min.js"></script>
+      <script type="text/javascript" src="/++resource++sentry.js"></script>
+      <!-- Sentry end -->
+
 
 Environment variables
 =====================

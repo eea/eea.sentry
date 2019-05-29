@@ -11,6 +11,7 @@
     name="sentry"
     for="zope.interface.Interface"
     class=".sentry.Sentry"
+    template="zpt/sentry.pt"
     permission="zope2.View"
     />
 

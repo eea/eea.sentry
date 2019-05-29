@@ -2,10 +2,7 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="eea">
-
-  <five:registerPackage package="." initialize=".initialize" />
 
   <genericsetup:registerProfile
       zcml:condition="have plone-5"
