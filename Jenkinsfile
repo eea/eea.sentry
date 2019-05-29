@@ -137,7 +137,7 @@ pipeline {
           },
 
           "Zope2": {
-            node(label: 'docker') {
+            node(label: 'eea') {
               script {
                 checkout scm
                 sh '''cd buildouts/zope2 && ./install.sh && ./bin/instance-uptest'''
