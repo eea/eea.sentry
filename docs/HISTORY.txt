@@ -3,6 +3,9 @@ Changelog
 
 1.0-dev0 - (unreleased)
 -----------------------
+* Upgrade step: Within "Plone > Site setup > Add-ons"
+  install/reinstall eea.sentry
+  [avoinea refs #104872]
 * Feature: Add JS integration
   [avoinea refs #104872]
 
