@@ -13,8 +13,7 @@ $(function(){
             environment: sentry_env,
             serverName: sentry_server,
             tags: {
-                site: sentry_site,
-                user: sentry_user
+                site: sentry_site
             },
             ignoreErrors: [
                 'jQuery is not defined',
@@ -24,5 +23,6 @@ $(function(){
                  'Persistent storage maximum size reached'
             ]
         }).install();
+        Raven.setUserContext(sentry_user);
     }
 });
