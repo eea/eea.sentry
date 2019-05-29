@@ -140,9 +140,7 @@ pipeline {
             node(label: 'docker') {
               script {
                 checkout scm
-                sh '''cd buildouts/zope2'''
-                sh '''./install.sh'''
-                sh '''./bin/instance-uptest'''
+                sh '''cd buildouts/zope2 && ./install.sh && ./bin/instance-uptest'''
               }
             }
           }
