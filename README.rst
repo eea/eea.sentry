@@ -36,6 +36,7 @@ Install
 
 * You can download a sample buildout from:
 
+  - https://github.com/eea/eea.sentry/tree/master/buildouts/zope2
   - https://github.com/eea/eea.sentry/tree/master/buildouts/plone4
   - https://github.com/eea/eea.sentry/tree/master/buildouts/plone5
 
@@ -72,6 +73,7 @@ In order to start sending error logs to sentry you'll need to provide the follow
 Buildout installation
 =====================
 
+- `Zope 2 <https://github.com/eea/eea.sentry/tree/master/buildouts/zope2>`_
 - `Plone 4+ <https://github.com/eea/eea.sentry/tree/master/buildouts/plone4>`_
 - `Plone 5+ <https://github.com/eea/eea.sentry/tree/master/buildouts/plone5>`_
 

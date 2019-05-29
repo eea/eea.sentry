@@ -46,6 +46,7 @@ setup(name=NAME,
           'test': [
               'plone.app.testing',
           ],
+          'zope2': []
       },
       entry_points="""
       [z3c.autoinclude.plugin]
