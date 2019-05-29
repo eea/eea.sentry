@@ -1,10 +1,15 @@
-$(function(){
-    var sentry_dsn = $('#sentry').data('sentry-dsn') || $('body').data('sentry-dsn');
-    var sentry_env = $('#sentry').data('sentry-env') || $('body').data('sentry-env');
-    var sentry_ver = $('#sentry').data('sentry-ver') || $('body').data('sentry-ver');
-    var sentry_user = $('#sentry').data('sentry-user') || $('body').data('sentry-user');
-    var sentry_site = $('#sentry').data('sentry-site') || $('body').data('sentry-site');
-    var sentry_server = $('#sentry').data('sentry-server') || $('body').data('sentry-server');
+(function() {
+    var context = document.getElementById("sentry");
+    if(!context) {
+        context = document.getElementsByTagName("body")[0];
+    }
+
+    var sentry_dsn = context.getAttribute("data-sentry-dsn");
+    var sentry_env = context.getAttribute("data-sentry-env");
+    var sentry_ver = context.getAttribute("data-sentry-ver");
+    var sentry_user = context.getAttribute("data-sentry-user");
+    var sentry_site = context.getAttribute("data-sentry-site");
+    var sentry_server = context.getAttribute("data-sentry-server");
 
     if (sentry_dsn){
         Raven.config(sentry_dsn, {
@@ -25,4 +30,4 @@ $(function(){
         }).install();
         Raven.setUserContext(sentry_user);
     }
-});
+})();
