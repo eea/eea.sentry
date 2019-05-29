@@ -1,12 +1,14 @@
 """ Sentry
 """
 import os
+import json
 import logging
+import socket
 from urlparse import urlparse
 from eventlet.green import urllib2
 from contextlib import closing
+from AccessControl.users import nobody
 from Products.Five.browser import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from eea.sentry.cache import ramcache
 
 logger = logging.getLogger("eea.sentry")
@@ -39,7 +41,7 @@ class Sentry(BrowserView):
                 except Exception as err:
                     logger.warn(
                         "Please provide SENTRY_ENVIRONMENT env as we "
-                        "could not get it automatically from %s due to: %s", 
+                        "could not get it automatically from %s due to: %s",
                         url, err)
                     self._environment = 'devel'
         return self._environment
@@ -71,6 +73,21 @@ class Sentry(BrowserView):
         """
         return os.environ.get("SENTRY_SITE",
             os.environ.get("SERVER_NAME", ""))
+
+    def server(self):
+        """ Sentry server_name
+        """
+        return socket.gethostname()
+
+    def user(self):
+        """ Get authenticated user
+        """
+        user = self.request.get('AUTHENTICATED_USER', None)
+        if user is not None and user != nobody:
+            user_dict = {'id': user.getId()}
+        else:
+            user_dict = {}
+        return json.dumps(user_dict)
 
     def __call__(self):
         return self.index()
