@@ -7,9 +7,14 @@
     var sentry_dsn = context.getAttribute("data-sentry-dsn");
     var sentry_env = context.getAttribute("data-sentry-env");
     var sentry_ver = context.getAttribute("data-sentry-ver");
-    var sentry_user = context.getAttribute("data-sentry-user");
     var sentry_site = context.getAttribute("data-sentry-site");
     var sentry_server = context.getAttribute("data-sentry-server");
+    var sentry_user = context.getAttribute("data-sentry-user");
+    try {
+        sentry_user = JSON.parse(sentry_user);
+    } catch (err) {
+        sentry_user = {};
+    }
 
     if (sentry_dsn){
         Raven.config(sentry_dsn, {
