@@ -1,6 +1,6 @@
-==========================
+==========
 eea.sentry
-==========================
+==========
 .. image:: https://ci.eionet.europa.eu/buildStatus/icon?job=eea/eea.sentry/develop
   :target: https://ci.eionet.europa.eu/job/eea/job/eea.sentry/job/develop/display/redirect
   :alt: Develop
@@ -8,7 +8,7 @@ eea.sentry
   :target: https://ci.eionet.europa.eu/job/eea/job/eea.sentry/job/master/display/redirect
   :alt: Master
 
-The eea.sentry is a Plone add-on
+Sentry integration for Plone and Zope
 
 .. contents::
 
@@ -17,35 +17,63 @@ Main features
 =============
 It comes with plenty of configuration options and features like:
 
-1. Easy to install/uninstall via Site Setup > Add-ons
-2.
-3.
+1. Easy to install/uninstall via Site Setup > Add-ons;
+2. Easily setup Sentry integration via environment variables;
+3. Report Python/Javascript errors to Sentry.
+
 
 Install
 =======
 
-* Add eea.sentry to your eggs section in your buildout and
-  re-run buildout::
+* Add eea.sentry to your eggs section in your buildout and re-run buildout::
 
     [buildout]
     eggs +=
       eea.sentry
 
+    zcml +=
+      eea.sentry
+
 * You can download a sample buildout from:
 
+  - https://github.com/eea/eea.sentry/tree/master/buildouts/zope2
   - https://github.com/eea/eea.sentry/tree/master/buildouts/plone4
   - https://github.com/eea/eea.sentry/tree/master/buildouts/plone5
 
 * Or via docker::
 
-    $ docker run --rm -p 8080:8080 -e ADDONS="eea.sentry" plone
+    $ docker run --rm -p 8080:8080 -e ADDONS="eea.sentry" -e SENTRY_DSN="https://<public_key>:<secret_key>@sentry.io" plone
 
-* Install *eea.sentry* within Site Setup > Add-ons
+* Plone:
+
+  * Within Site Setup > Add-ons install eea.sentry
+
+* Zope:
+
+  * Add the following lines within your ZPT files / main_template::
+
+      <!-- Sentry start -->
+      <div tal:replace="structure context/@@sentry" />
+      <script type="text/javascript" src="/++resource++raven.min.js"></script>
+      <script type="text/javascript" src="/++resource++sentry.js"></script>
+      <!-- Sentry end -->
+
+
+Environment variables
+=====================
+
+In order to start sending error logs to sentry you'll need to provide the following environment variables to your Zope/Plone instance:
+
+* **SENTRY_DSN** - Send python tracebacks to sentry.io or your custom Sentry installation (e.g.: **SENTRY_DSN=https://<public_key>:<secret_key>@sentry.example.com**)
+* **SENTRY_SITE**, **SERVER_NAME** - Add **site** tag to Sentry logs (e.g.: **SENTRY_SITE=foo.example.com**)
+* **SENTRY_RELEASE**, **EEA_KGS_VERSION** - Add **release** tag to Sentry logs (e.g.: **SENTRY_RELEASE=5.1.5-34**)
+* **SENTRY_ENVIRONMENT** - Add **environment** tag to Sentry logs. Leave empty to automatically get it from rancher-metadata (e.g.: **SENTRY_ENVIRONMENT=staging**)
 
 
 Buildout installation
 =====================
 
+- `Zope 2 <https://github.com/eea/eea.sentry/tree/master/buildouts/zope2>`_
 - `Plone 4+ <https://github.com/eea/eea.sentry/tree/master/buildouts/plone4>`_
 - `Plone 5+ <https://github.com/eea/eea.sentry/tree/master/buildouts/plone5>`_
 

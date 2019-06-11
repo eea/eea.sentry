@@ -1,8 +1,22 @@
 Changelog
 =========
 
-1.0-dev0 - (unreleased)
------------------------
+1.0 - (2019-06-01)
+------------------
+* Upgrade step: Within "Plone > Site setup > Add-ons"
+  install/reinstall eea.sentry
+  [avoinea refs #104872]
+* Feature: Add JS integration
+  [avoinea refs #104872]
 
-* Initial release.
-  [eea]
+0.2 - (2019-05-16)
+------------------
+* Feature: Setup Sentry logger via environment variables
+  [avoinea refs #104872]
+
+0.1 - (2019-05-16)
+------------------
+* Feature: Add custom raven processors to cleanup Zope REQUEST
+  [avoinea refs #104872]
+* Upgrade step: Within "Plone > Site setup > Add-ons" install eea.sentry
+  [avoinea refs #104872]

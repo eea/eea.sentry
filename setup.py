@@ -19,7 +19,7 @@ setup(name=NAME,
           "Environment :: Web Environment",
           "Framework :: Plone",
           "Framework :: Plone :: Addon",
-          "Framework :: EEA :: Addon",
+          "Framework :: Plone :: 4.3",
           "Framework :: Plone :: 5.1",
           "Programming Language :: Python",
           "Programming Language :: Python :: 2.7",
@@ -38,12 +38,15 @@ setup(name=NAME,
             python_requires="==2.7",
             install_requires=[
           'setuptools',
+          'eventlet',
+          'raven',
           # -*- Extra requirements: -*-
       ],
       extras_require={
           'test': [
               'plone.app.testing',
           ],
+          'zope2': []
       },
       entry_points="""
       [z3c.autoinclude.plugin]

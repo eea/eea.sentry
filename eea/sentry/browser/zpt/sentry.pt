@@ -1,0 +1,8 @@
+<div id="sentry" tal:attributes="
+  data-sentry-dsn view/dsn|string:;
+  data-sentry-env view/environment|string:;
+  data-sentry-ver view/version|string:;
+  data-sentry-user view/user|string:{};
+  data-sentry-site view/site|string:;
+  data-sentry-server view/server|string:;
+"><!-- Sentry config --></div>

@@ -1,7 +1,13 @@
 """ Custom setup
 """
-from Products.CMFPlone.interfaces import INonInstallable
 from zope.interface import implementer
+try:
+    from Products.CMFPlone.interfaces import INonInstallable
+except ImportError:
+    from zope.interface import Interface
+    class INonInstallable(Interface):
+        """ Not a Plone context
+        """
 
 
 @implementer(INonInstallable)
@@ -13,6 +19,7 @@ class HiddenProfiles(object):
         """ Hide uninstall profile from site-creation and quickinstaller.
         """
         return [
+            'eea.sentry:universal',
             'eea.sentry:uninstall',
         ]
 
