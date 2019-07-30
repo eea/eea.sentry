@@ -7,7 +7,6 @@ import socket
 from urlparse import urlparse
 from eventlet.green import urllib2
 from contextlib import closing
-from AccessControl.users import nobody
 from Products.Five.browser import BrowserView
 from eea.sentry.cache import ramcache
 
@@ -83,7 +82,7 @@ class Sentry(BrowserView):
         """ Get authenticated user
         """
         user = self.request.get('AUTHENTICATED_USER', None)
-        if user is not None and user != nobody:
+        if user is not None and user.getUserName() != 'Anonymous User':
             user_dict = {'id': user.getId()}
         else:
             user_dict = {}

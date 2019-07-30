@@ -3,6 +3,9 @@ Changelog
 
 1.1-dev0 - (unreleased)
 ---------------------
+* maintain backwards compatibility with non-plone systems when checking
+ for anonymous
+ [valipod refs #102005]
 
 1.0 - (2019-06-01)
 ------------------
