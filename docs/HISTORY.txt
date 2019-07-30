@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.1 - (2019-07-30)
+---------------------
+* maintain backwards compatibility with non-plone systems when checking
+ for anonymous
+ [valipod refs #102005]
+
 1.0 - (2019-06-01)
 ------------------
 * Upgrade step: Within "Plone > Site setup > Add-ons"
