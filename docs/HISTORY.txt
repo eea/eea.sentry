@@ -1,6 +1,9 @@
 Changelog
 =========
 
+1.3-dev0 - (unreleased)
+---------------------
+
 1.2 - (2019-07-30)
 ---------------------
 * maintain backwards compatibility with non-plone systems when checking
