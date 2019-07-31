@@ -15,6 +15,7 @@ setup(name=NAME,
           open("README.rst").read() + "\n" +
           open(os.path.join("docs", "HISTORY.txt")).read()
       ),
+      long_description_content_type='text/x-rst',
       classifiers=[
           "Environment :: Web Environment",
           "Framework :: Plone",
