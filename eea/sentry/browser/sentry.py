@@ -4,8 +4,18 @@ import os
 import json
 import logging
 import socket
-from urllib.parse import urlparse
-# from eventlet.green import urllib2 ? is this needed
+try:
+    #Python3
+    from urllib.parse import urlparse
+except ImportError:
+    #Python2
+    from urlparse import urlparse
+try:
+    #Python3
+    from eventlet.green.urllib import request
+except ImportError:
+    #Python2
+    from eventlet.green import urllib2 as request
 from contextlib import closing
 from Products.Five.browser import BrowserView
 from eea.sentry.cache import ramcache
@@ -35,7 +45,7 @@ class Sentry(BrowserView):
             if not self._environment:
                 url = RANCHER_METADATA + '/self/stack/environment_name'
                 try:
-                    with closing(urllib.request.urlopen(url, timeout=TIMEOUT)) as con:
+                    with closing(request.urlopen(url, timeout=TIMEOUT)) as con:
                         self._environment = con.read()
                 except Exception as err:
                     logger.warn(

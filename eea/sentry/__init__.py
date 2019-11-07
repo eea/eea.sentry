@@ -2,7 +2,12 @@
 """
 import os
 import logging
-import urllib.request, urllib.error, urllib.parse
+try:
+    #Python3
+    from eventlet.green.urllib import request
+except ImportError:
+    #Python2
+    from eventlet.green import urllib2 as request
 from contextlib import closing
 from raven.contrib.zope import ZopeSentryHandler
 from zope.i18nmessageid.message import MessageFactory
@@ -15,7 +20,7 @@ def environment():
     """
     url = "http://rancher-metadata/latest/self/stack/environment_name"
     try:
-        with closing(urllib.request.urlopen(url)) as conn:
+        with closing(request.urlopen(url)) as conn:
             env = conn.read()
     except Exception as err:
         logger.warn("Couldn't get environ from rancher-metadata: %s.", err)
