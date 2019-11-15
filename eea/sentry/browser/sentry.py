@@ -2,13 +2,17 @@
 """
 import os
 import json
+import six
 import logging
 import socket
-from urlparse import urlparse
-from eventlet.green import urllib2
 from contextlib import closing
 from Products.Five.browser import BrowserView
 from eea.sentry.cache import ramcache
+from six.moves.urllib.parse import urlparse
+if six.PY2:
+    from eventlet.green import urllib2 as request
+else:
+    from eventlet.green.urllib import request
 
 logger = logging.getLogger("eea.sentry")
 
@@ -35,7 +39,7 @@ class Sentry(BrowserView):
             if not self._environment:
                 url = RANCHER_METADATA + '/self/stack/environment_name'
                 try:
-                    with closing(urllib2.urlopen(url, timeout=TIMEOUT)) as con:
+                    with closing(request.urlopen(url, timeout=TIMEOUT)) as con:
                         self._environment = con.read()
                 except Exception as err:
                     logger.warn(

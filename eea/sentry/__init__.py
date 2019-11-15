@@ -1,11 +1,16 @@
 """ Main product initializer
 """
 import os
+import six
 import logging
-import urllib2
 from contextlib import closing
 from raven.contrib.zope import ZopeSentryHandler
 from zope.i18nmessageid.message import MessageFactory
+if six.PY2:
+    from eventlet.green import urllib2 as request
+else:
+    from eventlet.green.urllib import request
+
 EEAMessageFactory = MessageFactory('eea')
 logger = logging.getLogger()
 
@@ -15,7 +20,7 @@ def environment():
     """
     url = "http://rancher-metadata/latest/self/stack/environment_name"
     try:
-        with closing(urllib2.urlopen(url)) as conn:
+        with closing(request.urlopen(url)) as conn:
             env = conn.read()
     except Exception as err:
         logger.warn("Couldn't get environ from rancher-metadata: %s.", err)
