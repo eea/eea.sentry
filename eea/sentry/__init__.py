@@ -1,16 +1,16 @@
 """ Main product initializer
 """
 import os
+import six
 import logging
-try:
-    #Python3
-    from eventlet.green.urllib import request
-except ImportError:
-    #Python2
-    from eventlet.green import urllib2 as request
 from contextlib import closing
 from raven.contrib.zope import ZopeSentryHandler
 from zope.i18nmessageid.message import MessageFactory
+if six.PY2:
+    from eventlet.green import urllib2 as request
+else:
+    from eventlet.green.urllib import request
+
 EEAMessageFactory = MessageFactory('eea')
 logger = logging.getLogger()
 

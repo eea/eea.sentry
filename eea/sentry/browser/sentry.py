@@ -2,23 +2,17 @@
 """
 import os
 import json
+import six
 import logging
 import socket
-try:
-    #Python3
-    from urllib.parse import urlparse
-except ImportError:
-    #Python2
-    from urlparse import urlparse
-try:
-    #Python3
-    from eventlet.green.urllib import request
-except ImportError:
-    #Python2
-    from eventlet.green import urllib2 as request
 from contextlib import closing
 from Products.Five.browser import BrowserView
 from eea.sentry.cache import ramcache
+from six.moves.urllib.parse import urlparse
+if six.PY2:
+    from eventlet.green import urllib2 as request
+else:
+    from eventlet.green.urllib import request
 
 logger = logging.getLogger("eea.sentry")
 

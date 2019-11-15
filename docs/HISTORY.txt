@@ -3,10 +3,8 @@ Changelog
 
 1.3-dev0 - (unreleased)
 ---------------------
-* Feature: added Python3 compatibility.
-  [alecghica refs #110155]
-* Feature: added Python3 compatibility
-  [iulianpetchesi refs #110155]
+* Feature: Python3 support
+  [alecghica, iulianpetcheshi, avoinea refs #110155]
 
 1.2 - (2019-07-30)
 ---------------------
