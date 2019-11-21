@@ -1,8 +1,13 @@
 Changelog
 =========
 
+1.3 - (2019-11-15)
+--------------------------
+* Feature: Python3 support
+  [alecghica, iulianpetcheshi, avoinea refs #110155]
+
 1.2 - (2019-07-30)
----------------------
+--------------------------
 * maintain backwards compatibility with non-plone systems when checking
   for anonymous
   [valipod refs #102005]
