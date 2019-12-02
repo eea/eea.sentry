@@ -1,4 +1,4 @@
-(function() {
+document.addEventListener("DOMContentLoaded", function(){
     var context = document.getElementById("sentry");
     if(!context) {
         context = document.getElementsByTagName("body")[0];
@@ -35,4 +35,4 @@
         }).install();
         Raven.setUserContext(sentry_user);
     }
-})();
+});
