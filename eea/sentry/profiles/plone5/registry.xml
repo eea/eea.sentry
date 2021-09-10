@@ -2,9 +2,9 @@
 <registry>
 
   <!-- Sentry -->
-  <records prefix="plone.resources/raven"
+  <records prefix="plone.resources/sentrybundle"
            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
-    <value key="js">++resource++raven.min.js</value>
+    <value key="js">++resource++sentry.min.js</value>
   </records>
 
   <records prefix="plone.resources/sentry"
@@ -15,12 +15,15 @@
   <records prefix="plone.bundles/eea-sentry"
            interface='Products.CMFPlone.interfaces.IBundleRegistry'>
     <value key="resources">
-      <element>raven</element>
+      <element>sentrybundle</element>
       <element>sentry</element>
     </value>
     <value key="jscompilation">++plone++static/eea-sentry.min.js</value>
     <value key="compile">False</value>
     <value key="enabled">True</value>
   </records>
+
+  <records interface="eea.sentry.interfaces.ISentrySettings"
+           prefix="eea.sentry" />
 
 </registry>

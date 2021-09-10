@@ -4,7 +4,7 @@
   xmlns:browser="http://namespaces.zope.org/browser"
   i18n_domain="eea">
 
-  <browser:resource name="raven.min.js" file="./js/raven.min.js" />
+  <browser:resource name="sentry.min.js" file="./js/bundle.min.js" />
   <browser:resource name="sentry.js" file="./js/sentry.js" />
 
   <browser:page

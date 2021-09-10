@@ -17,7 +17,8 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     if (sentry_dsn){
-        Raven.config(sentry_dsn, {
+        Sentry.init({
+            dsn: sentry_dsn,
             logger: 'javascript',
             release: sentry_ver,
             environment: sentry_env,
@@ -33,6 +34,6 @@ document.addEventListener("DOMContentLoaded", function(){
                  'Persistent storage maximum size reached'
             ]
         }).install();
-        Raven.setUserContext(sentry_user);
+        Sentry.setUser(sentry_user);
     }
 });

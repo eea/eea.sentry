@@ -54,7 +54,7 @@ Install
 
       <!-- Sentry start -->
       <div tal:replace="structure context/@@sentry" />
-      <script type="text/javascript" src="/++resource++raven.min.js"></script>
+      <script type="text/javascript" src="/++resource++sentry.min.js"></script>
       <script type="text/javascript" src="/++resource++sentry.js"></script>
       <!-- Sentry end -->
 

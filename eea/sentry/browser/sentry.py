@@ -56,10 +56,11 @@ class Sentry(BrowserView):
         return os.environ.get("SENTRY_RELEASE",
             os.environ.get("EEA_KGS_VERSION", ""))
 
-    @ramcache(lambda *args: "dsn", lifetime=86400)
+    #@ramcache(lambda *args: "dsn", lifetime=86400)
     def dsn(self):
         """ Public Sentry DSN
         """
+        import pdb;pdb.set_trace()
         dsn = os.environ.get("SENTRY_DSN", "")
         if not "@" in dsn:
             return dsn
