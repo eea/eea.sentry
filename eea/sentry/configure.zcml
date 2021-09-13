@@ -1,7 +1,6 @@
 <configure
   xmlns="http://namespaces.zope.org/zope"
   xmlns:zcml="http://namespaces.zope.org/zcml"
-  xmlns:browser="http://namespaces.zope.org/browser"
   xmlns:i18n="http://namespaces.zope.org/i18n"
   xmlns:five="http://namespaces.zope.org/five"
   i18n_domain="eea">
@@ -13,11 +12,6 @@
   <include file="profiles.zcml" zcml:condition="installed Products.GenericSetup" />
   <include package=".upgrades" zcml:condition="installed Products.GenericSetup"/>
 
-  <browser:page
-      name="sentry-settings"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      class=".controlpanel.SentryControlPanelView"
-      permission="cmf.ManagePortal"
-      />
+  <subscriber handler=".__init__.errorRaisedSubscriber"/>
 
 </configure>

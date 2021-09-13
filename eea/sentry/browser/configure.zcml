@@ -15,6 +15,13 @@
     permission="zope2.View"
     />
 
+  <browser:page
+    name="test_sentry"
+    for="*"
+    class=".sentry.TestSentry"
+    permission="zope2.View"
+    />
+
   <browser:viewlet
     zcml:condition="installed plone.app.layout.viewlets"
     name="eea.sentry"

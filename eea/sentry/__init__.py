@@ -1,11 +1,11 @@
 """ Main product initializer
 """
 import os
+import sys
 import six
 import logging
 from contextlib import closing
 import sentry_sdk
-from sentry_sdk import set_user
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.users import nobody
 from zope.i18nmessageid.message import MessageFactory
@@ -14,11 +14,12 @@ if six.PY2:
     from eventlet.green import urllib2 as request
 else:
     from eventlet.green.urllib import request
-from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
-from zope.interface.interfaces import ComponentLookupError
+from zope.component import adapter
 
 from ZPublisher.HTTPRequest import _filterPasswordFields
+from plone import api
+from ZPublisher.interfaces import IPubFailure
+from plone.api.exc import CannotGetPortalError
 
 EEAMessageFactory = MessageFactory('eea')
 logger = logging.getLogger()
@@ -131,8 +132,9 @@ def _before_send(event, hint):
             event["extra"]["form"] = _get_form_from_request(request)
         if "request" not in event["extra"]:
             event["extra"]["request"] = _get_request_from_request(request)
+        #import ipdb;ipdb.set_trace()
         user_info = _get_user_from_request(request)
-        set_user(user_info)
+        sentry_sdk.set_user(user_info)
 
     return event
 
@@ -146,12 +148,6 @@ def before_send(event, hint):
 
 def initialize(context):
     """ Initializer """
-    try:
-        registry = getUtility(IRegistry)
-        import pdb;pdb.set_trace()
-    except ComponentLookupError:
-        # we don't yet have traversal context
-        pass
 
     sentry_dsn = os.environ.get('SENTRY_DSN', '')
     if not sentry_dsn:
@@ -173,3 +169,38 @@ def initialize(context):
     if request:
         user_info = _get_user_from_request(request)
         sentry_sdk.set_user(user_info)
+
+
+@adapter(IPubFailure)
+def errorRaisedSubscriber(event):
+    exc_info = (
+        sys.exc_info()
+    )  # Save exc_info before new exceptions (CannotGetPortalError) arise
+    import ipdb;ipdb.set_trace()
+    try:
+        portal = api.portal.get()
+        error_log = api.portal.get_tool(name="error_log")
+    except CannotGetPortalError:
+        # Try to get Zope root.
+        try:
+            portal = event.request.PARENTS[0]
+            error_log = portal.error_log
+        except (AttributeError, KeyError, IndexError):
+            error_log = None
+
+    if error_log and exc_info[0].__name__ in error_log._ignored_exceptions:
+        return
+
+    with sentry_sdk.push_scope() as scope:
+        scope.set_extra("other", _get_other_from_request(event.request))
+        scope.set_extra("lazy items", _get_lazyitems_from_request(event.request))
+        scope.set_extra("cookies", _get_cookies_from_request(event.request))
+        scope.set_extra("form", _get_form_from_request(event.request))
+        scope.set_extra("request", _get_request_from_request(event.request))
+        user_info = _get_user_from_request(event.request)
+        scope.set_extra("user", user_info)
+        if user_info and "id" in user_info:
+            scope.user = user_info
+            scope.set_tag('site', portal.getId())
+
+        sentry_sdk.capture_exception(exc_info)

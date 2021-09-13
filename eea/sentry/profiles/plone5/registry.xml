@@ -23,7 +23,4 @@
     <value key="enabled">True</value>
   </records>
 
-  <records interface="eea.sentry.interfaces.ISentrySettings"
-           prefix="eea.sentry" />
-
 </registry>
