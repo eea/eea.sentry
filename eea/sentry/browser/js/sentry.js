@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function(){
             serverName: sentry_server,
             tags: {
                 site: sentry_site
-            },
+            }
         });
         Sentry.setUser(sentry_user);
     }
