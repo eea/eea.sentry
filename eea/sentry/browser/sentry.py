@@ -14,6 +14,14 @@ if six.PY2:
 else:
     from eventlet.green.urllib import request
 
+try:
+    from plone import api
+    from plone.api.exc import CannotGetPortalError
+except ImportError:
+    # not in plone
+    api = None
+    CannotGetPortalError = 'CannotGetPortalError'
+
 logger = logging.getLogger("eea.sentry")
 
 RANCHER_METADATA = 'http://rancher-metadata/latest'
@@ -43,7 +51,7 @@ class Sentry(BrowserView):
                     with closing(request.urlopen(url, timeout=TIMEOUT)) as con:
                         self._environment = con.read()
                 except Exception as err:
-                    logger.warn(
+                    logger.warning(
                         "Please provide SENTRY_ENVIRONMENT env as we "
                         "could not get it automatically from %s due to: %s",
                         url, err)
@@ -65,7 +73,7 @@ class Sentry(BrowserView):
         if "@" not in dsn:
             return dsn
 
-        # Remove password from SENTRY_DSN
+        # Remove password from SENTRY_DSN, if provided (old format)
         url = urlparse(dsn)
         public = url._replace(netloc="{}@{}".format(
             url.username, url.hostname))
@@ -73,10 +81,13 @@ class Sentry(BrowserView):
 
     @ramcache(lambda *args: "site", lifetime=86400)
     def site(self):
-        """ Sentry site
+        """ return site id
         """
+        site = get_site(self.request)
+        if site:
+            return site.getId()
         return os.environ.get(
-            "SENTRY_SITE", os.environ.get("SERVER_NAME", ""))
+            "SENTRY_SITE", os.environ.get("SERVER_NAME", "dev"))
 
     def server(self):
         """ Sentry server_name
@@ -98,7 +109,27 @@ class Sentry(BrowserView):
 
     __call__ = render
 
-class TestSentry(BrowserView):
 
-    def __call__(self):
-        error = 2 / 0
+def get_site(request):
+    """ return the site id based on the request data """
+    site = None
+    # Try Plone
+    if api:
+        try:
+            site = api.portal.get()
+        except CannotGetPortalError:
+            # We are not in a Plone site
+            pass
+    # Try Naaya
+    if not site:
+        try:
+            site = request.PARENTS[0].getSite()
+        except AttributeError:
+            # We are not in a Naaya Site
+            pass
+    if not site:
+        try:
+            site = request.PARENTS[-2]
+        except (IndexError):
+            pass
+    return site

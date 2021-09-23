@@ -1,11 +1,11 @@
 """ Main product initializer
 """
 import os
+import re
 import sys
 import six
 import logging
 from contextlib import closing
-import sentry_sdk
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.users import nobody
 from zope.i18nmessageid.message import MessageFactory
@@ -17,9 +17,10 @@ else:
 from zope.component import adapter
 
 from ZPublisher.HTTPRequest import _filterPasswordFields
-from plone import api
 from ZPublisher.interfaces import IPubFailure
-from plone.api.exc import CannotGetPortalError
+import sentry_sdk
+from sentry_sdk.integrations.logging import ignore_logger
+from eea.sentry.browser.sentry import get_site
 
 EEAMessageFactory = MessageFactory('eea')
 logger = logging.getLogger()
@@ -71,13 +72,6 @@ def _get_lazyitems_from_request(request):
     return lazy_items
 
 
-def _get_cookies_from_request(request):
-    cookies = {}
-    for k, v in _filterPasswordFields(request.cookies.items()):
-        cookies[k] = repr(v)
-    return cookies
-
-
 def _get_form_from_request(request):
     form = {}
     for k, v in _filterPasswordFields(request.form.items()):
@@ -126,24 +120,31 @@ def _before_send(event, hint):
             event["extra"]["other"] = _get_other_from_request(request)
         if "lazy items" not in event["extra"]:
             event["extra"]["lazy items"] = _get_lazyitems_from_request(request)
-        if "cookies" not in event["extra"]:
-            event["extra"]["cookies"] = _get_cookies_from_request(request)
         if "form" not in event["extra"]:
             event["extra"]["form"] = _get_form_from_request(request)
         if "request" not in event["extra"]:
             event["extra"]["request"] = _get_request_from_request(request)
-        #import ipdb;ipdb.set_trace()
-        user_info = _get_user_from_request(request)
-        sentry_sdk.set_user(user_info)
 
     return event
+
+
+def _get_browser_from_request(request):
+    ''' return browser and version as a tuple '''
+    browsers = {'MSIE': 'Internet Explorer', 'OPR': 'Opera',
+                'Trident': 'Internet Explorer', 'Edg': 'Edge'}
+    user_agent = request.environ['HTTP_USER_AGENT']
+    for browser in ['Edg', 'Firefox', 'Seamonkey', 'OPR', 'Opera', 'Trident',
+                    'MSIE', 'Chrome', 'Chromium', 'Safari']:
+        match = re.findall(browser + '[/ ]?([0-9.]+)', user_agent)
+        if match:
+            return (browsers.get(browser, browser), match[0])
 
 
 def before_send(event, hint):
     try:
         return _before_send(event, hint)
     except KeyError:
-        logging.warning("Could not extract data from request", exc_info=True)
+        logger.warn("Could not extract data from request", exc_info=True)
 
 
 def initialize(context):
@@ -161,14 +162,8 @@ def initialize(context):
         environment=os.environ.get("SENTRY_ENVIRONMENT", environment()),
         traces_sample_rate=1.0,
     )
-    sentry_sdk.set_context("additional", {
-        'site': os.environ.get('SENTRY_SITE',
-                               os.environ.get('SERVER_NAME', "dev")),
-    })
-    request = getRequest()
-    if request:
-        user_info = _get_user_from_request(request)
-        sentry_sdk.set_user(user_info)
+    logger.info('Sentry integration enabled')
+    ignore_logger("Zope.SiteErrorLog")
 
 
 @adapter(IPubFailure)
@@ -176,31 +171,34 @@ def errorRaisedSubscriber(event):
     exc_info = (
         sys.exc_info()
     )  # Save exc_info before new exceptions (CannotGetPortalError) arise
-    import ipdb;ipdb.set_trace()
+    portal = get_site(event.request)
     try:
-        portal = api.portal.get()
-        error_log = api.portal.get_tool(name="error_log")
-    except CannotGetPortalError:
-        # Try to get Zope root.
-        try:
-            portal = event.request.PARENTS[0]
-            error_log = portal.error_log
-        except (AttributeError, KeyError, IndexError):
-            error_log = None
+        error_log = portal.error_log
+    except AttributeError:
+        error_log = None
 
     if error_log and exc_info[0].__name__ in error_log._ignored_exceptions:
         return
 
     with sentry_sdk.push_scope() as scope:
         scope.set_extra("other", _get_other_from_request(event.request))
-        scope.set_extra("lazy items", _get_lazyitems_from_request(event.request))
-        scope.set_extra("cookies", _get_cookies_from_request(event.request))
+        scope.set_extra("lazy items",
+                        _get_lazyitems_from_request(event.request))
         scope.set_extra("form", _get_form_from_request(event.request))
         scope.set_extra("request", _get_request_from_request(event.request))
         user_info = _get_user_from_request(event.request)
-        scope.set_extra("user", user_info)
         if user_info and "id" in user_info:
             scope.user = user_info
-            scope.set_tag('site', portal.getId())
+        if portal:
+            site_id = portal.getId()
+        else:
+            site_id = os.environ.get('SENTRY_SITE',
+                                     os.environ.get('SERVER_NAME', "dev"))
+        scope.set_tag('site', site_id)
+        browser = _get_browser_from_request(event.request)
+        if browser:
+            scope.set_tag('browser', '%s %s' % browser)
+            scope.set_tag('browser.name', browser[0])
+            scope.set_tag('browser.version', browser[1])
 
         sentry_sdk.capture_exception(exc_info)

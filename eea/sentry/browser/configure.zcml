@@ -4,7 +4,7 @@
   xmlns:browser="http://namespaces.zope.org/browser"
   i18n_domain="eea">
 
-  <browser:resource name="sentry.min.js" file="./js/bundle.min.js" />
+  <browser:resource name="sentry.min.js" file="./js/bundle.tracing.min.js" />
   <browser:resource name="sentry.js" file="./js/sentry.js" />
 
   <browser:page
@@ -12,13 +12,6 @@
     for="zope.interface.Interface"
     class=".sentry.Sentry"
     template="zpt/sentry.pt"
-    permission="zope2.View"
-    />
-
-  <browser:page
-    name="test_sentry"
-    for="*"
-    class=".sentry.TestSentry"
     permission="zope2.View"
     />
 

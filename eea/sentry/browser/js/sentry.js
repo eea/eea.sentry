@@ -19,21 +19,24 @@ document.addEventListener("DOMContentLoaded", function(){
     if (sentry_dsn){
         Sentry.init({
             dsn: sentry_dsn,
-            logger: 'javascript',
             release: sentry_ver,
             environment: sentry_env,
-            serverName: sentry_server,
-            tags: {
-                site: sentry_site
-            },
+            integrations: [new Sentry.Integrations.BrowserTracing()],
+            tracesSampleRate: 1.0,
+            attachStacktrace: true,
             ignoreErrors: [
                 'jQuery is not defined',
                  '$ is not defined',
                  'Can\'t find variable: jQuery',
                  'Socialite is not defined',
                  'Persistent storage maximum size reached'
-            ]
-        }).install();
+            ],
+            logger: 'javascript',
+            serverName: sentry_server,
+            tags: {
+                site: sentry_site
+            },
+        });
         Sentry.setUser(sentry_user);
     }
 });
