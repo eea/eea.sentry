@@ -14,10 +14,19 @@ if six.PY2:
 else:
     from eventlet.green.urllib import request
 
+try:
+    from plone import api
+    from plone.api.exc import CannotGetPortalError
+except ImportError:
+    # not in plone
+    api = None
+    CannotGetPortalError = 'CannotGetPortalError'
+
 logger = logging.getLogger("eea.sentry")
 
 RANCHER_METADATA = 'http://rancher-metadata/latest'
 TIMEOUT = 15
+
 
 class Sentry(BrowserView):
     """ return sentry DSN env variable
@@ -34,15 +43,15 @@ class Sentry(BrowserView):
         """ Sentry environment
         """
         if not self._environment:
-            self._environment = os.environ.get('ENVIRONMENT',
-                                os.environ.get('SENTRY_ENVIRONMENT', ''))
+            self._environment = os.environ.get(
+                'ENVIRONMENT', os.environ.get('SENTRY_ENVIRONMENT', ''))
             if not self._environment:
                 url = RANCHER_METADATA + '/self/stack/environment_name'
                 try:
                     with closing(request.urlopen(url, timeout=TIMEOUT)) as con:
                         self._environment = con.read()
                 except Exception as err:
-                    logger.warn(
+                    logger.warning(
                         "Please provide SENTRY_ENVIRONMENT env as we "
                         "could not get it automatically from %s due to: %s",
                         url, err)
@@ -53,18 +62,18 @@ class Sentry(BrowserView):
     def version(self):
         """ KGS version
         """
-        return os.environ.get("SENTRY_RELEASE",
-            os.environ.get("EEA_KGS_VERSION", ""))
+        return os.environ.get(
+            "SENTRY_RELEASE", os.environ.get("EEA_KGS_VERSION", ""))
 
     @ramcache(lambda *args: "dsn", lifetime=86400)
     def dsn(self):
         """ Public Sentry DSN
         """
         dsn = os.environ.get("SENTRY_DSN", "")
-        if not "@" in dsn:
+        if "@" not in dsn:
             return dsn
 
-        # Remove password from SENTRY_DSN
+        # Remove password from SENTRY_DSN, if provided (old format)
         url = urlparse(dsn)
         public = url._replace(netloc="{}@{}".format(
             url.username, url.hostname))
@@ -72,10 +81,13 @@ class Sentry(BrowserView):
 
     @ramcache(lambda *args: "site", lifetime=86400)
     def site(self):
-        """ Sentry site
+        """ return site id
         """
-        return os.environ.get("SENTRY_SITE",
-            os.environ.get("SERVER_NAME", ""))
+        site = get_site(self.request)
+        if site:
+            return site.getId()
+        return os.environ.get(
+            "SENTRY_SITE", os.environ.get("SERVER_NAME", "dev"))
 
     def server(self):
         """ Sentry server_name
@@ -96,3 +108,28 @@ class Sentry(BrowserView):
         return self.index()
 
     __call__ = render
+
+
+def get_site(request):
+    """ return the site id based on the request data """
+    site = None
+    # Try Plone
+    if api:
+        try:
+            site = api.portal.get()
+        except CannotGetPortalError:
+            # We are not in a Plone site
+            pass
+    # Try Naaya
+    if not site:
+        try:
+            site = request.PARENTS[0].getSite()
+        except AttributeError:
+            # We are not in a Naaya Site
+            pass
+    if not site:
+        try:
+            site = request.PARENTS[-2]
+        except (IndexError):
+            pass
+    return site

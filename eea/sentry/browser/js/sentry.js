@@ -17,22 +17,26 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     if (sentry_dsn){
-        Raven.config(sentry_dsn, {
-            logger: 'javascript',
+        Sentry.init({
+            dsn: sentry_dsn,
             release: sentry_ver,
             environment: sentry_env,
-            serverName: sentry_server,
-            tags: {
-                site: sentry_site
-            },
+            integrations: [new Sentry.Integrations.BrowserTracing()],
+            tracesSampleRate: 1.0,
+            attachStacktrace: true,
             ignoreErrors: [
                 'jQuery is not defined',
                  '$ is not defined',
                  'Can\'t find variable: jQuery',
                  'Socialite is not defined',
                  'Persistent storage maximum size reached'
-            ]
-        }).install();
-        Raven.setUserContext(sentry_user);
+            ],
+            logger: 'javascript',
+            serverName: sentry_server,
+            tags: {
+                site: sentry_site
+            }
+        });
+        Sentry.setUser(sentry_user);
     }
 });

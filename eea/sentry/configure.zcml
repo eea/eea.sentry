@@ -12,4 +12,6 @@
   <include file="profiles.zcml" zcml:condition="installed Products.GenericSetup" />
   <include package=".upgrades" zcml:condition="installed Products.GenericSetup"/>
 
+  <subscriber handler=".__init__.errorRaisedSubscriber"/>
+
 </configure>
