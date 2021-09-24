@@ -1,8 +1,10 @@
 Changelog
 =========
 
-1.5-dev0 - (unreleased)
+1.5 - (2021-09-24)
 ---------------------------
+* Change: Migrate to the new sentry SDK
+  [valipod]
 
 1.4 - (2019-12-02)
 ---------------------------
