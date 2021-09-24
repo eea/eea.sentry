@@ -146,17 +146,7 @@ pipeline {
             node(label: 'docker') {
               sh '''docker run -i --rm --name="$BUILD_TAG-python3" -e GIT_BRANCH="$BRANCH_NAME" -e ADDONS="$GIT_NAME" -e DEVELOP="src/$GIT_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/plone-test:5-python3 -v -vv -s $GIT_NAME'''
             }
-          },
-
-          "Zope2": {
-            node(label: 'eea') {
-              script {
-                checkout scm
-                sh '''cd buildouts/zope2 && ./install.sh && ./bin/instance-uptest'''
-              }
-            }
           }
-
         )
       }
     }
