@@ -107,4 +107,4 @@ echo "========================================================================="
 info "All set. Running ./bin/buildout -c $CONFIG"
 echo "========================================================================="
 echo ""
-exec bin/buildout -c $CONFIG
+exec buildout -c $CONFIG
