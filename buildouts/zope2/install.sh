@@ -101,10 +101,10 @@ else
   pip install pip==$PIP setuptools==$SETUPTOOLS zc.buildout==$ZCBUILDOUT wheel==$WHEEL
 
 fi
-
+pip install pip==$PIP setuptools==$SETUPTOOLS zc.buildout==$ZCBUILDOUT wheel==$WHEEL
 echo ""
 echo "========================================================================="
 info "All set. Running ./bin/buildout -c $CONFIG"
 echo "========================================================================="
 echo ""
-exec virtualenv/bin/buildout -c $CONFIG
+exec bin/buildout -c $CONFIG
