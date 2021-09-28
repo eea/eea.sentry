@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.0 - (2021-09-28)
+---------------------------
+* Change: major version bump for the new sentry SDK
+
 1.5 - (2021-09-24)
 ---------------------------
 * Change: Migrate to the new sentry SDK
