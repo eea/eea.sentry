@@ -3,7 +3,7 @@ Changelog
 
 2.0-dev0 - (unreleased)
 ---------------------------
-* Change: 
+* Change: major version bump for the new sentry SDK
 
 1.5 - (2021-09-24)
 ---------------------------
