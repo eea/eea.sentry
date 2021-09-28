@@ -3,6 +3,8 @@ Changelog
 
 2.1-dev0 - (unreleased)
 ---------------------------
+* add upgrade step for the new javascript
+  [valipod]
 
 2.0 - (2021-09-28)
 ---------------------------
