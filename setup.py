@@ -36,7 +36,6 @@ setup(name=NAME,
       namespace_packages=['eea'],
       include_package_data=True,
       zip_safe=False,
-      python_requires="==2.7",
       install_requires=[
           'setuptools',
           'eventlet',
