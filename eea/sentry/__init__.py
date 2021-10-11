@@ -189,7 +189,7 @@ def errorRaisedSubscriber(event):
         user_info = _get_user_from_request(event.request)
         if user_info and "id" in user_info:
             scope.user = user_info
-        if portal:
+        if hasattr(portal, 'getId'):
             site_id = portal.getId()
         else:
             site_id = os.environ.get('SENTRY_SITE',
