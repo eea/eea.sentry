@@ -132,7 +132,7 @@ def _get_browser_from_request(request):
     ''' return browser and version as a tuple '''
     browsers = {'MSIE': 'Internet Explorer', 'OPR': 'Opera',
                 'Trident': 'Internet Explorer', 'Edg': 'Edge'}
-    user_agent = request.environ['HTTP_USER_AGENT']
+    user_agent = request.environ.get('HTTP_USER_AGENT', '')
     for browser in ['Edg', 'Firefox', 'Seamonkey', 'OPR', 'Opera', 'Trident',
                     'MSIE', 'Chrome', 'Chromium', 'Safari']:
         match = re.findall(browser + '[/ ]?([0-9.]+)', user_agent)
@@ -189,7 +189,7 @@ def errorRaisedSubscriber(event):
         user_info = _get_user_from_request(event.request)
         if user_info and "id" in user_info:
             scope.user = user_info
-        if portal:
+        if hasattr(portal, 'getId'):
             site_id = portal.getId()
         else:
             site_id = os.environ.get('SENTRY_SITE',
