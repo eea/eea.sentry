@@ -132,7 +132,7 @@ def _get_browser_from_request(request):
     ''' return browser and version as a tuple '''
     browsers = {'MSIE': 'Internet Explorer', 'OPR': 'Opera',
                 'Trident': 'Internet Explorer', 'Edg': 'Edge'}
-    user_agent = request.environ['HTTP_USER_AGENT']
+    user_agent = request.environ.get('HTTP_USER_AGENT', '')
     for browser in ['Edg', 'Firefox', 'Seamonkey', 'OPR', 'Opera', 'Trident',
                     'MSIE', 'Chrome', 'Chromium', 'Safari']:
         match = re.findall(browser + '[/ ]?([0-9.]+)', user_agent)
