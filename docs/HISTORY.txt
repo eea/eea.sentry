@@ -1,6 +1,9 @@
 Changelog
 =========
 
+2.4-dev0 - (unreleased)
+---------------------------
+
 2.3 - (2021-10-11)
 ---------------------------
 * Bug fix: KeyError HTTP_USER_AGENT
