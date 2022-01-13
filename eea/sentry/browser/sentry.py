@@ -124,12 +124,12 @@ def get_site(request):
     if not site:
         try:
             site = request.PARENTS[0].getSite()
-        except AttributeError:
+        except (IndexError, AttributeError):
             # We are not in a Naaya Site
             pass
     if not site:
         try:
             site = request.PARENTS[-2]
-        except (IndexError):
+        except (IndexError, AttributeError):
             pass
     return site
