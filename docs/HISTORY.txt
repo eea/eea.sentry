@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0-dev0 - (unreleased)
+3.0 - (2023-05-05)
 ---------------------------
 * Refactor: Drop eea.cache dependency in favor of plone.memoize
   [avoinea]
