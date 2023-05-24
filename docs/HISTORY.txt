@@ -1,6 +1,11 @@
 Changelog
 =========
 
+3.0 - (2023-05-05)
+---------------------------
+* Refactor: Drop eea.cache dependency in favor of plone.memoize
+  [avoinea]
+
 2.4 - (2022-01-13)
 ---------------------------
 * Bug fix: AttributeError PARENTS

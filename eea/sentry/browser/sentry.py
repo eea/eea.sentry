@@ -7,7 +7,7 @@ import logging
 import socket
 from contextlib import closing
 from Products.Five.browser import BrowserView
-from eea.sentry.cache import ramcache
+from plone.memoize import view
 from six.moves.urllib.parse import urlparse
 if six.PY2:
     from eventlet.green import urllib2 as request
@@ -38,7 +38,7 @@ class Sentry(BrowserView):
         self.view = view
         self.manager = manager
 
-    @ramcache(lambda *args: "environment", lifetime=86400)
+    @view.memoize
     def environment(self):
         """ Sentry environment
         """
@@ -58,14 +58,14 @@ class Sentry(BrowserView):
                     self._environment = 'devel'
         return self._environment
 
-    @ramcache(lambda *args: "version", lifetime=86400)
+    @view.memoize
     def version(self):
         """ KGS version
         """
         return os.environ.get(
             "SENTRY_RELEASE", os.environ.get("EEA_KGS_VERSION", ""))
 
-    @ramcache(lambda *args: "dsn", lifetime=86400)
+    @view.memoize
     def dsn(self):
         """ Public Sentry DSN
         """
@@ -79,7 +79,7 @@ class Sentry(BrowserView):
             url.username, url.hostname))
         return public.geturl()
 
-    @ramcache(lambda *args: "site", lifetime=86400)
+    @view.memoize
     def site(self):
         """ return site id
         """
