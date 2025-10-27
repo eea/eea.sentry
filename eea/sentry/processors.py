@@ -1,9 +1,8 @@
-""" Raven custom processors for Zope
-"""
-#from raven.processors import SanitizePasswordsProcessor
+"""Raven custom processors for Zope"""
+# from raven.processors import SanitizePasswordsProcessor
 
 
-#class SanitizeZopeProcessor(SanitizePasswordsProcessor):
+# class SanitizeZopeProcessor(SanitizePasswordsProcessor):
 #    """ Sanitize zope request
 #    """
 #    HEADERS = frozenset([
