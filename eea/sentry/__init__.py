@@ -1,5 +1,5 @@
-""" Main product initializer
-"""
+"""Main product initializer"""
+
 import os
 import re
 import sys
@@ -10,6 +10,7 @@ from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.users import nobody
 from zope.i18nmessageid.message import MessageFactory
 from zope.globalrequest import getRequest
+
 if six.PY2:
     from eventlet.green import urllib2 as request
 else:
@@ -22,13 +23,12 @@ import sentry_sdk
 from sentry_sdk.integrations.logging import ignore_logger
 from eea.sentry.browser.sentry import get_site
 
-EEAMessageFactory = MessageFactory('eea')
+EEAMessageFactory = MessageFactory("eea")
 logger = logging.getLogger()
 
 
 def environment():
-    """ Try to get environment from rancher-metadata
-    """
+    """Try to get environment from rancher-metadata"""
     url = "http://rancher-metadata/latest/self/stack/environment_name"
     try:
         with closing(request.urlopen(url)) as conn:
@@ -51,7 +51,7 @@ def _get_user_from_request(request):
             "email": user.getProperty("email") or "",
         }
     else:
-        user_dict = {'id': 'Anonymous'}
+        user_dict = {"id": "Anonymous"}
 
     return user_dict
 
@@ -107,7 +107,7 @@ def _get_request_from_request(request):
 
 def _before_send(event, hint):
     """
-     Inject Plone/Zope specific information (based on raven.contrib.zope)
+    Inject Plone/Zope specific information (based on raven.contrib.zope)
     """
     request = getRequest()
 
@@ -129,13 +129,27 @@ def _before_send(event, hint):
 
 
 def _get_browser_from_request(request):
-    ''' return browser and version as a tuple '''
-    browsers = {'MSIE': 'Internet Explorer', 'OPR': 'Opera',
-                'Trident': 'Internet Explorer', 'Edg': 'Edge'}
-    user_agent = request.environ.get('HTTP_USER_AGENT', '')
-    for browser in ['Edg', 'Firefox', 'Seamonkey', 'OPR', 'Opera', 'Trident',
-                    'MSIE', 'Chrome', 'Chromium', 'Safari']:
-        match = re.findall(browser + '[/ ]?([0-9.]+)', user_agent)
+    """return browser and version as a tuple"""
+    browsers = {
+        "MSIE": "Internet Explorer",
+        "OPR": "Opera",
+        "Trident": "Internet Explorer",
+        "Edg": "Edge",
+    }
+    user_agent = request.environ.get("HTTP_USER_AGENT", "")
+    for browser in [
+        "Edg",
+        "Firefox",
+        "Seamonkey",
+        "OPR",
+        "Opera",
+        "Trident",
+        "MSIE",
+        "Chrome",
+        "Chromium",
+        "Safari",
+    ]:
+        match = re.findall(browser + "[/ ]?([0-9.]+)", user_agent)
         if match:
             return (browsers.get(browser, browser), match[0])
 
@@ -148,21 +162,22 @@ def before_send(event, hint):
 
 
 def initialize(context):
-    """ Initializer """
+    """Initializer"""
 
-    sentry_dsn = os.environ.get('SENTRY_DSN', '')
+    sentry_dsn = os.environ.get("SENTRY_DSN", "")
     if not sentry_dsn:
         return
     sentry_sdk.init(
         sentry_dsn,
         max_breadcrumbs=50,
         before_send=before_send,
-        release=os.environ.get('SENTRY_RELEASE',
-                               os.environ.get('EEA_KGS_VERSION', 'dev')),
+        release=os.environ.get(
+            "SENTRY_RELEASE", os.environ.get("EEA_KGS_VERSION", "dev")
+        ),
         environment=os.environ.get("SENTRY_ENVIRONMENT", environment()),
         traces_sample_rate=1.0,
     )
-    logger.info('Sentry integration enabled')
+    logger.info("Sentry integration enabled")
     ignore_logger("Zope.SiteErrorLog")
 
 
@@ -182,23 +197,23 @@ def errorRaisedSubscriber(event):
 
     with sentry_sdk.push_scope() as scope:
         scope.set_extra("other", _get_other_from_request(event.request))
-        scope.set_extra("lazy items",
-                        _get_lazyitems_from_request(event.request))
+        scope.set_extra("lazy items", _get_lazyitems_from_request(event.request))
         scope.set_extra("form", _get_form_from_request(event.request))
         scope.set_extra("request", _get_request_from_request(event.request))
         user_info = _get_user_from_request(event.request)
         if user_info and "id" in user_info:
             scope.user = user_info
-        if hasattr(portal, 'getId'):
+        if hasattr(portal, "getId"):
             site_id = portal.getId()
         else:
-            site_id = os.environ.get('SENTRY_SITE',
-                                     os.environ.get('SERVER_NAME', "dev"))
-        scope.set_tag('site', site_id)
+            site_id = os.environ.get(
+                "SENTRY_SITE", os.environ.get("SERVER_NAME", "dev")
+            )
+        scope.set_tag("site", site_id)
         browser = _get_browser_from_request(event.request)
         if browser:
-            scope.set_tag('browser', '%s %s' % browser)
-            scope.set_tag('browser.name', browser[0])
-            scope.set_tag('browser.version', browser[1])
+            scope.set_tag("browser", "%s %s" % browser)
+            scope.set_tag("browser.name", browser[0])
+            scope.set_tag("browser.version", browser[1])
 
         sentry_sdk.capture_exception(exc_info)
