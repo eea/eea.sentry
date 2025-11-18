@@ -1,5 +1,5 @@
-""" Sentry
-"""
+"""Sentry"""
+
 import os
 import json
 import six
@@ -9,6 +9,7 @@ from contextlib import closing
 from Products.Five.browser import BrowserView
 from plone.memoize import view
 from six.moves.urllib.parse import urlparse
+
 if six.PY2:
     from eventlet.green import urllib2 as request
 else:
@@ -20,17 +21,17 @@ try:
 except ImportError:
     # not in plone
     api = None
-    CannotGetPortalError = 'CannotGetPortalError'
+    CannotGetPortalError = "CannotGetPortalError"
 
 logger = logging.getLogger("eea.sentry")
 
-RANCHER_METADATA = 'http://rancher-metadata/latest'
+RANCHER_METADATA = "http://rancher-metadata/latest"
 TIMEOUT = 15
 
 
 class Sentry(BrowserView):
-    """ return sentry DSN env variable
-    """
+    """return sentry DSN env variable"""
+
     _environment = os.environ.get("SENTRY_ENVIRONMENT", None)
 
     def __init__(self, context, request, view=None, manager=None):
@@ -40,13 +41,13 @@ class Sentry(BrowserView):
 
     @view.memoize
     def environment(self):
-        """ Sentry environment
-        """
+        """Sentry environment"""
         if not self._environment:
             self._environment = os.environ.get(
-                'ENVIRONMENT', os.environ.get('SENTRY_ENVIRONMENT', ''))
+                "ENVIRONMENT", os.environ.get("SENTRY_ENVIRONMENT", "")
+            )
             if not self._environment:
-                url = RANCHER_METADATA + '/self/stack/environment_name'
+                url = RANCHER_METADATA + "/self/stack/environment_name"
                 try:
                     with closing(request.urlopen(url, timeout=TIMEOUT)) as con:
                         self._environment = con.read()
@@ -54,52 +55,46 @@ class Sentry(BrowserView):
                     logger.warning(
                         "Please provide SENTRY_ENVIRONMENT env as we "
                         "could not get it automatically from %s due to: %s",
-                        url, err)
-                    self._environment = 'devel'
+                        url,
+                        err,
+                    )
+                    self._environment = "devel"
         return self._environment
 
     @view.memoize
     def version(self):
-        """ KGS version
-        """
-        return os.environ.get(
-            "SENTRY_RELEASE", os.environ.get("EEA_KGS_VERSION", ""))
+        """KGS version"""
+        return os.environ.get("SENTRY_RELEASE", os.environ.get("EEA_KGS_VERSION", ""))
 
     @view.memoize
     def dsn(self):
-        """ Public Sentry DSN
-        """
+        """Public Sentry DSN"""
         dsn = os.environ.get("SENTRY_DSN", "")
         if "@" not in dsn:
             return dsn
 
         # Remove password from SENTRY_DSN, if provided (old format)
         url = urlparse(dsn)
-        public = url._replace(netloc="{}@{}".format(
-            url.username, url.hostname))
+        public = url._replace(netloc="{}@{}".format(url.username, url.hostname))
         return public.geturl()
 
     @view.memoize
     def site(self):
-        """ return site id
-        """
+        """return site id"""
         site = get_site(self.request)
         if site:
             return site.getId()
-        return os.environ.get(
-            "SENTRY_SITE", os.environ.get("SERVER_NAME", "dev"))
+        return os.environ.get("SENTRY_SITE", os.environ.get("SERVER_NAME", "dev"))
 
     def server(self):
-        """ Sentry server_name
-        """
+        """Sentry server_name"""
         return socket.gethostname()
 
     def user(self):
-        """ Get authenticated user
-        """
-        user = self.request.get('AUTHENTICATED_USER', None)
-        if user is not None and user.getUserName() != 'Anonymous User':
-            user_dict = {'id': user.getId()}
+        """Get authenticated user"""
+        user = self.request.get("AUTHENTICATED_USER", None)
+        if user is not None and user.getUserName() != "Anonymous User":
+            user_dict = {"id": user.getId()}
         else:
             user_dict = {}
         return json.dumps(user_dict)
@@ -111,7 +106,7 @@ class Sentry(BrowserView):
 
 
 def get_site(request):
-    """ return the site id based on the request data """
+    """return the site id based on the request data"""
     site = None
     # Try Plone
     if api:
