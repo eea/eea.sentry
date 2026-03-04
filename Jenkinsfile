@@ -3,7 +3,7 @@ pipeline {
 
   environment {
         GIT_NAME = "eea.sentry"
-        SONARQUBE_TAGS = "www.eea.europa.eu,www.eionet.europa.eu,biodiversity.europa.eu,industry.eea.europa.eu,forest.eea.europa.eu"
+        SONARQUBE_TAGS = "demo-www.eea.europa.eu,www.eea.europa.eu-en,www.eea.europa.eu,www.eionet.europa.eu,biodiversity.europa.eu,industry.eea.europa.eu,forest.eea.europa.eu"
         FTEST_DIR = "eea/sentry/ftests"
     }
 
