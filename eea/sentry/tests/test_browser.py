@@ -224,8 +224,9 @@ class TestGetSite(unittest.TestCase):
         with patch("eea.sentry.browser.sentry.api") as mock_api:
             mock_api.portal.get.side_effect = Exception("No portal")
             mock_api.exc.CannotGetPortalError = Exception
-            result = get_site(request)
-            self.assertIsNone(result)
+            with patch("eea.sentry.browser.sentry.CannotGetPortalError", Exception):
+                result = get_site(request)
+                self.assertIsNone(result)
 
     def test_get_site_fallback_to_parents(self):
         """Test get_site fallback to request.PARENTS."""
@@ -235,8 +236,9 @@ class TestGetSite(unittest.TestCase):
             mock_api.portal.get.side_effect = Exception("No portal")
             mock_api.exc.CannotGetPortalError = Exception
             request.PARENTS = [mock_site, "other"]
-            result = get_site(request)
-            self.assertEqual(result, mock_site)
+            with patch("eea.sentry.browser.sentry.CannotGetPortalError", Exception):
+                result = get_site(request)
+                self.assertEqual(result, mock_site)
 
 
 def test_suite():

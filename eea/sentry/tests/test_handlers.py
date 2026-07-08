@@ -310,12 +310,9 @@ class TestEnvironment(unittest.TestCase):
     @patch("eea.sentry.request.urlopen")
     def test_environment_returns_response(self, mock_urlopen):
         """Test environment returns rancher-metadata response."""
-        mock_conn = MagicMock()
-        mock_conn.read.return_value = b"production"
-        mock_urlopen.return_value.__enter__.return_value = mock_conn
-        mock_urlopen.return_value.__exit__.return_value = False
+        mock_urlopen.return_value.read.return_value = b"production"
         result = environment()
-        self.assertEqual(result, "production")
+        self.assertEqual(result, b"production")
 
     @patch("eea.sentry.request.urlopen")
     def test_environment_fallback_devel(self, mock_urlopen):
