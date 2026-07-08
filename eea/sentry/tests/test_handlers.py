@@ -292,9 +292,7 @@ class TestGetUserFromRequest(unittest.TestCase):
     def test_user_with_no_email(self):
         """Test user with empty email returns empty string."""
         req = MockRequest()
-        req.AUTHENTICATED_USER = MockUser(
-            username="john", user_id="john123", email=""
-        )
+        req.AUTHENTICATED_USER = MockUser(username="john", user_id="john123", email="")
         result = _get_user_from_request(req)
         self.assertEqual(result["email"], "")
 

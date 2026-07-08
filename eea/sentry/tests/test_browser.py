@@ -114,7 +114,9 @@ class TestSentryVersion(unittest.TestCase):
         """Test version falls back to EEA_KGS_VERSION."""
         self.assertEqual(self.view.version(), "5.0.0")
 
-    @patch.dict(os.environ, {"SENTRY_RELEASE": "1.0", "EEA_KGS_VERSION": "5.0"}, clear=True)
+    @patch.dict(
+        os.environ, {"SENTRY_RELEASE": "1.0", "EEA_KGS_VERSION": "5.0"}, clear=True
+    )
     def test_version_sentry_release_takes_precedence(self):
         """Test SENTRY_RELEASE takes precedence over EEA_KGS_VERSION."""
         self.assertEqual(self.view.version(), "1.0")
