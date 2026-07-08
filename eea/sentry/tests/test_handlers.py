@@ -1,6 +1,5 @@
 """Tests for eea.sentry module-level handler functions."""
 
-import os
 import unittest
 from unittest.mock import patch, MagicMock
 
